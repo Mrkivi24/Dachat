@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; }
+        #chat { width: 100%; max-width: 1500px; margin-top: 20px; }
+        #messages { height: 300px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; background-color: #f9f9f9; }
+        .message { margin: 5px 0; }
+        #messageInput { width: 100%; padding: 10px; }
+        button { padding: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Live Chatroom</h2>
+    <div id="chat">
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type a message..." />
+        <button id="sendBtn">Send</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Get username from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+
+        // Load message history
+        socket.on('loadHistory', (messages) => {
+            messages.forEach(({ username, message }) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.textContent = `${username}: ${message}`;
+                messagesDiv.appendChild(messageDiv);
+            });
+        });
+
+        // Send message to server
+        sendBtn.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message) {
+                console.log(`Sending message: ${message}`); // Debugging log
+                socket.emit('chatMessage', { username, message });
+                messageInput.value = '';
+            } else {
+                console.log('Empty message not sent'); // Debugging log
+            }
+        });
+
+        // Display new messages from server
+        socket.on('chatMessage', ({ username, message }) => {
+            console.log(`Received message: ${username}: ${message}`); // Debugging log
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.textContent = `${username}: ${message}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+        });
+    </script>
+</body>
+</html>
