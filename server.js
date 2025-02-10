@@ -95,13 +95,6 @@ io.on('connection', (socket) => {
         io.emit('updateUserList', connectedUsers);
     });
 
-    // Load message history
-    db.all("SELECT * FROM messages", (err, rows) => {
-        if (!err) {
-            socket.emit('loadHistory', rows);
-        }
-    });
-
     // Handle new messages
     socket.on('chatMessage', ({ username, message }) => {
         const stmt = db.prepare("INSERT INTO messages (username, message) VALUES (?, ?)");
