@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Hunting RPG - Login</title>
+    <style>
+        /* RPG Themed CSS */
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #9b9b9b;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+
+        #loginForm {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            color: gold;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #8B0000;
+            background: #222;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #8B0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #A52A2A;
+        }
+
+        #content {
+            text-align: center;
+            margin-top: 310px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 2000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginForm">
+        <h2>Login to get more stories!</h2>
+        <p>In order to get an account please buy an subscription!!</p>
+        <form id="form">
+            <input type="text" id="username" placeholder="User: " required>
+            <input type="password" id="password" placeholder="Password: " required>
+            <button type="submit">Enter</button>
+        </form>
+    </div>
+    
+    <div id="content">
+        <img style="width: 300px; height: 200px;" src="https://cdn.pixabay.com/photo/2016/03/31/21/34/beast-1296506_1280.png" alt="Dragons">
+        <h1>Welcome to Dragon Hunt Chronicles</h1>
+        <p>Explore the world of dragon hunting, uncover ancient legends, and embark on perilous quests. </p>
+        <p>Sign in to access exclusive stories and role-playing adventures!</p>
+    </div>
+
+<div id="text">
+<h3 style="font-weight: bold; color: #222;">The Chronicles of Dragon Hunters</h3>
+
+<p style="font-size: 20px;color: #000;">
+    In a world where fire-breathing beasts rule the skies and ancient ruins hold secrets of untold power, the life of a dragon hunter is one of danger, glory, and endless adventure.<br>
+
+Legends speak of the Wyrm Lords, titanic dragons whose scales are harder than steel and whose eyes burn with arcane wisdom. Only the bravest warriors, armed with enchanted weapons and years of training, dare to face these monstrous foes.
+ Some seek treasure hoards the size of castles, while others hunt for vengeance, their villages long since turned to ashes by a dragon’s wrath.<br>
+</p>
+<p style="font-size: 20px;color: #000;">As a hunter, you must forge your path—will you be a lone wanderer, tracking beasts through the frozen peaks, or a guild hero, standing side by side with allies in the heat of battle?
+ Will you wield magic, bending the elements to your will, or rely on pure steel and strategy to bring down your prey? <br>
+
+The world of dragon hunting is full of peril, but with great risk comes great reward. <br>
+From crafting armor out of dragon scales to unlocking forgotten spells hidden in their bones, every hunt tells a new story.
+
+Gather your party, sharpen your blades, and prepare for the hunt of a lifetime! </p> <br>
+
+<h3 style="font-weight: bold; color: #222;">The Art of Dragon Hunting: A Guide for Brave Adventurers</h3>
+
+<p style="font-size: 20px;color: #000;">
+    For centuries, dragon hunters have roamed the world, seeking out the most fearsome creatures ever to walk the land or take to the skies. Whether you are a seasoned warrior or a fledgling adventurer, understanding the ways of dragons is the key to survival.
+
+The Types of Dragons
+Not all dragons are the same, and each species presents a unique challenge.
+
+<b>Fire Drakes</b> – These massive, flame-spewing beasts dwell in volcanic caves and charred wastelands.<br> Their scales are nearly impervious to normal weapons, and their fiery breath can reduce entire villages to ash.
+<b>Frost Wyrms</b> – Hailing from the frozen tundras, these dragons breathe ice instead of fire.<br> Many hunters have fallen to their razor-sharp claws, frozen in place before they could strike.
+<b>Shadow Serpents</b> – Mysterious and elusive, these dragons lurk in the deepest caverns and forgotten ruins.<br> They use dark magic and illusions to confuse their prey, striking when least expected.
+<b>Storm Dragons</b> – Masters of wind and lightning, these creatures soar above the highest peaks. Facing one in battle means braving hurricanes, lightning strikes, and winds that can rip the strongest warrior from the ground.
+</p>
+
+<h3>Pay to see more!!</h3>
+<img style="width: 550px;height: 350px;"  src="https://cdn.pixabay.com/photo/2017/05/13/21/26/payment-2310730_1280.png" alt="Paywall">
+
+</div>
+
+    <script>
+        document.getElementById('form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (response.ok) {
+                window.location.href = `/chat.html?username=${encodeURIComponent(username)}`;
+            } else {
+                const errorData = await response.json();
+                alert(errorData.message || 'Invalid credentials. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
