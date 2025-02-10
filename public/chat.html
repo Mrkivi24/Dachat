@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+    <style>
+
+/* chatstyle.css */
+
+/* Body style */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    background-color: #000;
+    color: #20C20E;
+}
+
+/* Chat container */
+#chat {
+    width: 80%;
+    max-width: 800px;
+    border: 1px dashed #9747FF;
+    border-radius: 5px;
+    margin-top: 20px;
+    padding: 20px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Message display area */
+#messages {
+    height: 300px;
+    border: 1px solid #20C20E;
+    padding: 10px;
+    overflow-y: scroll;
+    background-color: #000;
+    color: #20C20E;
+    margin-bottom: 10px;
+}
+
+/* Individual message style */
+.message {
+    margin: 5px 0;
+    color: #20C20E;
+}
+
+/* Input for new messages */
+#messageInput {
+    width: calc(100% - 60px); /* Adjusted width to accommodate button */
+    padding: 10px;
+    border: 1px solid #20C20E;
+    background-color: #000;
+    color: #20C20E;
+    border-radius: 5px;
+    outline: none;
+    box-sizing: border-box;
+    margin-right: 10px;
+}
+
+/* Send button */
+button {
+    padding: 10px 20px;
+    background-color: #000;
+    border: 1px solid #20C20E;
+    color: #20C20E;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #20C20E;
+    color: #000;
+}
+
+
+/* User list container */
+#userList {
+    width: 100%;
+    max-width: 800px;
+    border: 1px solid #20C20E;
+    border-radius: 5px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #000;
+    color: #20C20E;
+    overflow-y: auto;
+}
+
+/* Individual user style */
+.user {
+    margin: 5px 0;
+    color: #20C20E;
+}
+
+
+
+    </style>
+</head>
+<body>
+    <h2>Live Chatroom</h2>
+    <div id="chat">
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type a message..." />
+        <button id="sendBtn">Send</button>
+    </div>
+
+    <!-- User list container -->
+    <div id="userList"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const userListDiv = document.getElementById('userList');
+
+        // Get username from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+
+        // Notify server of new user
+        socket.emit('userConnected', username);
+
+        // Load message history
+        socket.on('loadHistory', (messages) => {
+            messages.forEach(({ username, message }) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.textContent = `${username}: ${message}`;
+                messagesDiv.appendChild(messageDiv);
+            });
+        });
+
+        // Send message to server
+        sendBtn.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message) {
+                socket.emit('chatMessage', { username, message });
+                messageInput.value = '';
+            }
+        });
+
+        // Display new messages from server
+        socket.on('chatMessage', ({ username, message }) => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.textContent = `${username}: ${message}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+        });
+
+        // Update user list
+        socket.on('updateUserList', (users) => {
+            userListDiv.innerHTML = ''; // Clear the list first
+            users.forEach(user => {
+                const userDiv = document.createElement('div');
+                userDiv.classList.add('user');
+                userDiv.textContent = user;
+                userListDiv.appendChild(userDiv);
+            });
+        });
+    </script>
+</body>
+</html>
